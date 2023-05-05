@@ -9,5 +9,5 @@ docker run --name postgres_db  -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRE
 cd app
 go run main.go
 
-follow the /app/main.go file to handle routes
+#follow the /app/main.go file to handle routes
 ```
