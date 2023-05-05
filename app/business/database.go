@@ -17,11 +17,13 @@ type DB struct {
 }
 
 func (d *DB) ConnectDb() {
-	// To start DB run:
-	// docker run --name postgres_db  -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -d postgres:13
-	dsn_test := "host=172.17.0.2 user=postgres password=pass dbname=crud port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	//================================TEST==============================
+	// to run test: docker run --name postgres_db  -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=crud -d postgres:13
+	// then run: go test ./...
+	dsn := "host=localhost user=postgres password=pass dbname=crud port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	//==================================================================
 
-	db, err := gorm.Open(postgres.Open(dsn_test), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 
@@ -74,10 +76,10 @@ func (d *DB) Deposit(accntNumber string, amount float64) (float64, error) {
 	// get account with account number
 	d.Db.Where("account_Number = ?", accntNumber).First(&bankAccount)
 
-	depositID := generateID() // generate a random ID
+	depositID := generateID()  // generate a random ID
 	transactionDeposit := Transaction{ID: depositID, Amount: amount, Type: "Deposit", Date: time.Now(), BankAccountID: bankAccount.ID} // create a transaction
 	bankAccount.Ledger = append(bankAccount.Ledger, transactionDeposit) // add the transaction to the ledger
-	bankAccount.Balance += amount // update the balance
+	bankAccount.Balance += amount  // update the balance
 
 	d.Db.Where("account_Number = ?", accntNumber).Updates(&bankAccount) // update the account
 
